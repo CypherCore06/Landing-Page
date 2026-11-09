@@ -81,10 +81,10 @@
 <div class="success-card">
     <div class="icon-circle">✓</div>
     <h2>Verification Successful!</h2>
-    <p>Your single-use access key has been generated. Note that this key can only be used once.</p>
+    <p>Your secure daily access key has been generated. This key is valid for today only.</p>
     
     <div class="key-box-wrapper">
-        <div class="key-label">Your Single-Use Key</div>
+        <div class="key-label">Your Secure Key</div>
         <div class="key-display" id="keyText">Generating...</div>
     </div>
 
@@ -92,28 +92,43 @@
 </div>
 
 <script>
-    function generateSingleUseKey() {
+    // Get current date in YYYYMMDD format for time-based expiry
+    function getDateString() {
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}${month}${day}`;
+    }
+
+    function generateKey() {
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         let randomPart = "";
         for (let i = 0; i < 8; i++) {
             randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
         }
-        return "CYPHER-" + randomPart + "-2026";
+        return "CYPHER-" + randomPart + "-" + getDateString();
     }
 
-    // Generate and lock key for this session
-    const keyStorageKey = "cypher_active_key";
-    let currentKey = localStorage.getItem(keyStorageKey);
+    // Check localStorage for an existing key created *today*
+    const storageKey = "cypher_secure_key";
+    const storageDateKey = "cypher_key_date";
     
-    if (!currentKey) {
-        currentKey = generateSingleUseKey();
-        localStorage.setItem(keyStorageKey, currentKey);
+    let savedKey = localStorage.getItem(storageKey);
+    let savedDate = localStorage.getItem(storageDateKey);
+    const currentDate = getDateString();
+
+    // If date changed or no key exists, generate a fresh daily key
+    if (!savedKey || savedDate !== currentDate) {
+        savedKey = generateKey();
+        localStorage.setItem(storageKey, savedKey);
+        localStorage.setItem(storageDateKey, currentDate);
     }
 
-    document.getElementById('keyText').innerText = currentKey;
+    document.getElementById('keyText').innerText = savedKey;
 
     function copyKey() {
-        navigator.clipboard.writeText(currentKey).then(() => {
+        navigator.clipboard.writeText(savedKey).then(() => {
             alert("Key copied successfully! Paste it into your executor loader.");
         });
     }
