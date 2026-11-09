@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Key Unlocked - Success</title>
+    <title>Secure Key System - Verified</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -80,20 +80,19 @@
 
 <div class="success-card">
     <div class="icon-circle">✓</div>
-    <h2>Task Completed Successfully!</h2>
-    <p>Your advertisement verification is complete. Please copy your generated access key below to proceed with the script loader.</p>
+    <h2>Verification Successful!</h2>
+    <p>Your single-use access key has been generated. Note that this key can only be used once.</p>
     
     <div class="key-box-wrapper">
-        <div class="key-label">Your Dynamic Access Key</div>
-        <div class="key-display" id="keyText">Loading Key...</div>
+        <div class="key-label">Your Single-Use Key</div>
+        <div class="key-display" id="keyText">Generating...</div>
     </div>
 
     <button class="btn-action" onclick="copyKey()">Copy Key to Clipboard</button>
 </div>
 
 <script>
-    // Generate a secure dynamic shuffled key like Delta
-    function generateDynamicKey() {
+    function generateSingleUseKey() {
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         let randomPart = "";
         for (let i = 0; i < 8; i++) {
@@ -102,13 +101,20 @@
         return "CYPHER-" + randomPart + "-2026";
     }
 
-    // Set the dynamic key on page load
-    const generatedKey = generateDynamicKey();
-    document.getElementById('keyText').innerText = generatedKey;
+    // Generate and lock key for this session
+    const keyStorageKey = "cypher_active_key";
+    let currentKey = localStorage.getItem(keyStorageKey);
+    
+    if (!currentKey) {
+        currentKey = generateSingleUseKey();
+        localStorage.setItem(keyStorageKey, currentKey);
+    }
+
+    document.getElementById('keyText').innerText = currentKey;
 
     function copyKey() {
-        navigator.clipboard.writeText(generatedKey).then(() => {
-            alert("Key copied successfully! Paste it into your game loader.");
+        navigator.clipboard.writeText(currentKey).then(() => {
+            alert("Key copied successfully! Paste it into your executor loader.");
         });
     }
 </script>
