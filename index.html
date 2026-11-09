@@ -80,22 +80,35 @@
 
 <div class="success-card">
     <div class="icon-circle">✓</div>
-    <h2>Task Completed!</h2>
-    <p>Aapka ad verify ho chuka hai. Neeche diye gaye button par click karke apni key copy karein.</p>
+    <h2>Task Completed Successfully!</h2>
+    <p>Your advertisement verification is complete. Please copy your generated access key below to proceed with the script loader.</p>
     
     <div class="key-box-wrapper">
-        <div class="key-label">Your Script Key</div>
-        <div class="key-display" id="keyText">CYPHER-SECURE-KEY</div>
+        <div class="key-label">Your Dynamic Access Key</div>
+        <div class="key-display" id="keyText">Loading Key...</div>
     </div>
 
     <button class="btn-action" onclick="copyKey()">Copy Key to Clipboard</button>
 </div>
 
 <script>
+    // Generate a secure dynamic shuffled key like Delta
+    function generateDynamicKey() {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let randomPart = "";
+        for (let i = 0; i < 8; i++) {
+            randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return "CYPHER-" + randomPart + "-2026";
+    }
+
+    // Set the dynamic key on page load
+    const generatedKey = generateDynamicKey();
+    document.getElementById('keyText').innerText = generatedKey;
+
     function copyKey() {
-        const keyText = document.getElementById('keyText').innerText;
-        navigator.clipboard.writeText(keyText).then(() => {
-            alert("Key copied successfully! Paste it into the game loader.");
+        navigator.clipboard.writeText(generatedKey).then(() => {
+            alert("Key copied successfully! Paste it into your game loader.");
         });
     }
 </script>
